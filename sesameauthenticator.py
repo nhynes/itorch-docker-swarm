@@ -25,47 +25,47 @@ class UnixResolver(Resolver):
         raise gen.Return(result)
 
 
-class DockerAuthenticator(LocalAuthenticator):
+class SesameAuthenticator(LocalAuthenticator):
     """A version that performs local system user creation from within a
     docker container.
 
     """
 
-    resolver = UnixResolver(resolver=Resolver(), socket_path='/restuser.sock')
-    AsyncHTTPClient.configure(None, resolver=resolver)
-    client = AsyncHTTPClient()
-
-
-    def system_user_exists(self, user):
-        # user_id is stored in state after looking it up
-        return user.state and 'user_id' in user.state
-
-    @gen.coroutine
-    def add_system_user(self, user):
-        """Add a new user.
-
-        This adds the user to the whitelist, and creates a system user by
-        accessing a simple REST api.
-
-        """
-        try:
-            resp = yield self.client.fetch('http://unix+restuser/' + user.name, method='POST', body='{}')
-        except HTTPError as e:
-            self.log.error("Failed to create %r", user.name, exc_info=True)
-            raise
-
-        # todo: save the user id into the whitelist or somewhere
-        info = json.loads(resp.body.decode('utf8', 'replace'))
-        self.log.info("Created user %s with uid %i", user.name, info['uid'])
-        if user.state is None:
-            user.state = {}
-            user.state['user_id'] = info['uid']
-            self.db.commit()
-
-        # update the state in the spawner, so that it knows the user id, etc.
-        user.spawner.load_state(user.state)
+#    resolver = UnixResolver(resolver=Resolver(), socket_path='/var/run/restuser.sock')
+#    AsyncHTTPClient.configure(None, resolver=resolver)
+#    client = AsyncHTTPClient()
+#
+#
+#    def system_user_exists(self, user):
+#        # user_id is stored in state after looking it up
+#        return user.state and 'user_id' in user.state
+#
+#    @gen.coroutine
+#    def add_system_user(self, user):
+#        """Add a new user.
+#
+#        This adds the user to the whitelist, and creates a system user by
+#        accessing a simple REST api.
+#
+#        """
+#        try:
+#            resp = yield self.client.fetch('http://unix+/var/run/restuser.sock/' + user.name, method='POST', body='{}')
+#        except HTTPError as e:
+#            self.log.error("Failed to create %r", user.name, exc_info=True)
+#            raise
+#
+#        # todo: save the user id into the whitelist or somewhere
+#        info = json.loads(resp.body.decode('utf8', 'replace'))
+#        self.log.info("Created user %s with uid %i", user.name, info['uid'])
+#        if user.state is None:
+#            user.state = {}
+#            user.state['user_id'] = info['uid']
+#            self.db.commit()
+#
+#        # update the state in the spawner, so that it knows the user id, etc.
+#        user.spawner.load_state(user.state)
 
     @gen.coroutine
     def authenticate(self, handler, data):
-        if data['password'] == os.environ('OPEN_SESAME'):
+        if data['password'] == os.environ['OPEN_SESAME']:
             return data['username']
