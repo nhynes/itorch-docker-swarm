@@ -3,8 +3,10 @@ FROM jupyterhub/jupyterhub
 MAINTAINER Nick Hynes <nhynes@mit.edu>
 
 RUN pip install --upgrade pip
-RUN pip install docker-py==1.9.0
-RUN pip install git+git://github.com/jupyter/dockerspawner.git
+RUN pip install \
+    docker-py==1.9.0 \
+    git+git://github.com/jupyter/dockerspawner.git \
+    jupyter_client
 
 # expose hub service, proxy, and api, respectively
 EXPOSE 8080
