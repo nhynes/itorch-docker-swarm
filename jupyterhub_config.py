@@ -24,7 +24,7 @@ c.Authenticator.admin_users = {'nhynes'}
 # Spawner
 hub_ip = os.environ['HUB_IP']
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
-c.DockerSpawner.container_image = 'nhynes/itorch-notebook'
+c.DockerSpawner.container_image = 'https://897458478256.dkr.ecr.us-west-1.amazonaws.com/itorch-singleuser'
 c.DockerSpawner.container_ip = '0.0.0.0'
 c.DockerSpawner.remove_containers = True
 c.DockerSpawner.hub_ip_connect = hub_ip
