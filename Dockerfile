@@ -17,7 +17,7 @@ EXPOSE 8080
 EXPOSE 8000
 EXPOSE 8081
 
+ENTRYPOINT ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
+
 COPY sesameauthenticator.py /srv/jupyterhub/sesameauthenticator.py
 COPY jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
-
-ENTRYPOINT ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
