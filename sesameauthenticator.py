@@ -1,6 +1,7 @@
 import os
 
 from jupyterhub.auth import LocalAuthenticator
+import tornado.gen as gen
 
 class SesameAuthenticator(LocalAuthenticator):
     @gen.coroutine
